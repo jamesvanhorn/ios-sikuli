@@ -14,14 +14,14 @@ import org.testng.annotations.Test;
 public class TestSikuli {
 
 	private static Screen s = new Screen();
+	private static String deviceUDID = "743A24D8-7500-4114-85F3-7D7AA3D8942F";
 	
 	@BeforeClass
 	public static void setup() {
 		System.out.println("Entering BeforeClass");
 		//Open (and configure?) simulator
 		try {
-			Runtime.getRuntime().exec("open -a Simulator "
-					+ "--args -CurrentDeviceUDID 743A24D8-7500-4114-85F3-7D7AA3D8942F &");
+			Runtime.getRuntime().exec("open -a Simulator --args -CurrentDeviceUDID " + deviceUDID + " &");
 
 			s.wait("imgs/SettingsIcon.png", 60);
 		} catch (IOException | FindFailed ex) {
@@ -45,11 +45,12 @@ public class TestSikuli {
 		System.out.println("Entering BeforeMethod to change locale to es_US");
         try {
 	        s.click("imgs/SettingsIcon.png", 0);
-	        s.wait("imgs/english/GeneralOptionsButton.png", 5);
-	        s.click("imgs/english/GeneralOptionsButton.png", 0);
+	        s.wait("imgs/GeneralOptionsButton.png", 5);
+	        s.click("imgs/GeneralOptionsButton.png", 0);
 	        s.click("imgs/english/LangAndRegion.png", 0);
-	        s.click("imgs/english/LanguageButton.png", 0);
-	        s.type("imgs/english/SearchTextField.png", "Spanish");
+	        s.click("imgs/english/LangButton.png", 0);
+	        s.wait("imgs/SearchTextField.png");
+	        s.type("imgs/SearchTextField.png", "Spanish");
 	        s.click("imgs/english/SpanishButton.png", 0);
 	        s.click("imgs/english/Done.png", 0);
 	        s.click("imgs/english/ConfirmChangeToSpanish.png", 0);
@@ -77,7 +78,34 @@ public class TestSikuli {
 	@AfterMethod
 	public void changeLocaletoEnUs() {
 		System.out.println("Entering AfterMethod to revert locale to en_US");
-		//Need to revert the locale change
+		try {
+	        s.click("imgs/SettingsIcon.png", 0);
+	        s.wait("imgs/spanish/LangButton.png", 5);
+	        s.click("imgs/spanish/LangButton.png", 0);
+	        s.wait("imgs/SearchTextField.png");
+	        s.type("imgs/SearchTextField.png", "English");
+	        s.click("imgs/spanish/EnglishButton.png", 0);
+	        s.click("imgs/spanish/Ok.png", 0);
+	        s.click("imgs/spanish/ConfirmChangeToEnglish.png", 0);
+	        s.wait("imgs/BatteryIndicator.png", 30);
+	        s.wait(5.0);
+        
+	        //Go back to home screen
+			Robot robot = new Robot();
+			robot.keyPress(KeyEvent.VK_SHIFT);
+			robot.keyPress(KeyEvent.VK_META);
+			robot.keyPress(KeyEvent.VK_H);
+			
+			
+			robot.keyRelease(KeyEvent.VK_SHIFT);
+			robot.keyRelease(KeyEvent.VK_H);
+			robot.keyRelease(KeyEvent.VK_META);
+
+			s.wait("imgs/SettingsIcon.png", 10);
+        }
+        catch(FindFailed  | AWTException e) {
+        	e.printStackTrace();
+        }
 	}
 
 	@Test
