@@ -1,4 +1,6 @@
 function FindProxyForURL(url, host)
 {
-	return "PROXY 192.168.0.107:8888; DEFAULT";
+	ip = myIpAddress();
+	alert(ip);
+	return "PROXY 192.168.0.107:8888; DIRECT";
 }
